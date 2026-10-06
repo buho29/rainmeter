@@ -23,11 +23,11 @@ Pluviómetro DIY de balancín (*tipping bucket*) diseñado desde cero en Fusion 
 
 ## Sensores Zigbee usados
 
-| Sensor | Uso | Enlace |
-|---|---|---|
-| Sensor de puerta (reed) | Cuenta los vuelcos del balancín | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
-| Sensor de lluvia de placa | Detecta si está lloviendo | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **no lo recomiendo** |
-| Temperatura / humedad / presión | Dentro de la pantalla Stevenson | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
+| | Sensor | Uso | Enlace |
+|---|---|---|---|
+| <img src="img/sensor-puerta.jpg" width="100" alt="Sensor de puerta"> | Sensor de puerta (reed) | Cuenta los vuelcos del balancín | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
+| <img src="img/sensor-lluvia.jpg" width="100" alt="Sensor de lluvia"> | Sensor de lluvia de placa + luz (Tuya) | Detecta lluvia y mide la iluminación | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **no lo recomiendo** |
+| <img src="img/sensor-temperatura-presion.jpg" width="100" alt="Sensor Aqara"> | Aqara temperatura / humedad / presión | Dentro de la pantalla Stevenson | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
 
 ## Archivos
 
@@ -201,3 +201,12 @@ Un sensor `derivative` (`sensor.rainmeter_pressure_trend`, ventana de 20 min) ca
 <p align="center">
   <img src="img/13-dashboard-home-assistant.jpg" width="300" alt="Dashboard en Home Assistant">
 </p>
+
+## Fuentes de inspiración
+
+- **Rosca:** [Fusion 360 Thread Profiles for 3D Printing](https://makerworld.com/es/models/2567099-fusion-360-thread-profiles-for-3d-printing#profileId-2829308). Perfiles de rosca para Fusion 360 pensados para impresión 3D.
+- [Rain Gauge](https://makerworld.com/es/models/1366151-rain-gauge): de aquí viene la idea del balancín regulable con tornillos de calibración.
+- [Tipping Bucket Rain Gauge](https://makerworld.com/es/models/1451114-tipping-bucket-rain-gauge): pluviómetro de 100 cm² y 5 ml por vuelco (0,5 mm).
+- [LTB Weather Station](https://www.thingiverse.com/thing:2849562) (Thingiverse): estación meteorológica imprimible en 3D.
+
+El diseño de este pluviómetro es propio; estos modelos solo sirvieron de referencia.

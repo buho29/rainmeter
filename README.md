@@ -23,11 +23,11 @@ A DIY tipping bucket rain gauge designed from scratch in Fusion 360, printed in 
 
 ## Zigbee sensors used
 
-| Sensor | Purpose | Link |
-|---|---|---|
-| Door sensor (reed) | Counts the bucket tips | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
-| Plate rain sensor | Detects whether it is raining | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **not recommended** |
-| Temperature / humidity / pressure | Inside the Stevenson screen | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
+| | Sensor | Purpose | Link |
+|---|---|---|---|
+| <img src="img/sensor-puerta.jpg" width="100" alt="Door sensor"> | Door sensor (reed) | Counts the bucket tips | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
+| <img src="img/sensor-lluvia.jpg" width="100" alt="Rain sensor"> | Plate rain + light sensor (Tuya) | Detects rain and measures illuminance | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **not recommended** |
+| <img src="img/sensor-temperatura-presion.jpg" width="100" alt="Aqara sensor"> | Aqara temperature / humidity / pressure | Inside the Stevenson screen | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
 
 ## Files
 
@@ -201,3 +201,12 @@ A `derivative` sensor (`sensor.rainmeter_pressure_trend`, 20 min window) compute
 <p align="center">
   <img src="img/13-dashboard-home-assistant.jpg" width="300" alt="Home Assistant dashboard">
 </p>
+
+## Sources of inspiration
+
+- **Thread:** [Fusion 360 Thread Profiles for 3D Printing](https://makerworld.com/es/models/2567099-fusion-360-thread-profiles-for-3d-printing#profileId-2829308). Thread profiles for Fusion 360 tuned for 3D printing.
+- [Rain Gauge](https://makerworld.com/es/models/1366151-rain-gauge): the idea of an adjustable tipping bucket with calibration screws came from here.
+- [Tipping Bucket Rain Gauge](https://makerworld.com/es/models/1451114-tipping-bucket-rain-gauge): 100 cm² rain gauge with 5 ml per tip (0.5 mm).
+- [LTB Weather Station](https://www.thingiverse.com/thing:2849562) (Thingiverse): 3D-printable weather station.
+
+This rain gauge is an original design; these models were used only as reference.
