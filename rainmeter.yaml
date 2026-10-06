@@ -1,0 +1,177 @@
+# ============================================================
+# Rainmeter & Weather Package
+# Tipping-bucket rain gauge and weather trend integration for Home Assistant
+#
+# Hardware assumptions (adjust to your own build):
+#    - Funnel area:      100 cm²
+#    - Bucket volume:    5 ml per tip  ->  0.5 mm of rain per tip
+#    - Trigger sensor:   binary_sensor.puerta_1_contact (door/reed sensor)
+#    - Pressure sensor:  sensor.termometro_exterior_pressure
+#
+# Features:
+#    - Rain volume and flow rate tracking
+#    - Hourly and daily utility meters
+#    - Pressure derivative sensor to calculate weather trends
+#    - Automatic storm warning notification based on rapid pressure changes
+#
+# Install: drop this file into <config>/packages/rainmeter.yaml
+# and make sure configuration.yaml has:
+#
+#    homeassistant:
+#      packages: !include_dir_named packages
+#
+# ============================================================
+
+counter:
+  rainmeter_tip_count_calibration:
+    name: "Rainmeter Tip Count (Calibration)"
+    icon: mdi:tune-variant
+  rainmeter_tip_count_total:
+    name: "Rainmeter Tip Count (Total)"
+    icon: mdi:counter
+
+input_datetime:
+  rainmeter_flow_start_time:
+    name: "Rainmeter Flow Start Time"
+    has_date: true
+    has_time: true
+    icon: mdi:timer-outline
+
+utility_meter:
+  rainmeter_tips_hourly:
+    name: "Rainmeter Tips (Hourly)"
+    unique_id: rainmeter_tips_hourly
+    source: counter.rainmeter_tip_count_total
+    cycle: hourly
+  rainmeter_tips_daily:
+    name: "Rainmeter Tips (Daily)"
+    unique_id: rainmeter_tips_daily
+    source: counter.rainmeter_tip_count_total
+    cycle: daily
+
+# ------------------------------------------------------------
+# Legacy Sensors (Derivative platform for weather trends)
+# ------------------------------------------------------------
+sensor:
+  - platform: derivative
+    source: sensor.termometro_exterior_pressure
+    name: "Rainmeter Pressure Trend"
+    unique_id: rainmeter_pressure_trend
+    time_window: "00:20:00"
+    unit_time: h
+    round: 2
+
+# ------------------------------------------------------------
+# Template Sensors (Flow and Rain calculations)
+# ------------------------------------------------------------
+template:
+  - sensor:
+      - name: "Rainmeter Accumulated Rain"
+        unique_id: rainmeter_rain_accumulated
+        icon: mdi:water
+        unit_of_measurement: "mm"
+        state: >
+          {{ (states('counter.rainmeter_tip_count_calibration') | float(0)) * 0.5 }}
+
+      - name: "Rainmeter Flow Rate"
+        unique_id: rainmeter_flow_rate
+        icon: mdi:water-pump
+        unit_of_measurement: "mL/s"
+        state: >
+          {% set tips = states('counter.rainmeter_tip_count_calibration') | int(0) %}
+          {% if tips > 1 %}
+            {% set start = state_attr('input_datetime.rainmeter_flow_start_time', 'timestamp') %}
+            {% set last = as_timestamp(states.counter.rainmeter_tip_count_calibration.last_changed) %}
+            {% set seconds = last - start %}
+            {% if seconds > 0 %}
+              {{ ((tips * 5) / seconds) | round(2) }}
+            {% else %}
+              0
+            {% endif %}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: "Rainmeter Rain Rate Hourly"
+        unique_id: rainmeter_rain_rate_hourly
+        icon: mdi:weather-rainy
+        unit_of_measurement: "mm/h"
+        state: >
+          {{ (states('sensor.rainmeter_tips_hourly') | float(0) * 0.5) | round(2) }}
+
+      - name: "Rainmeter Rain Rate Daily"
+        unique_id: rainmeter_rain_rate_daily
+        icon: mdi:weather-pouring
+        unit_of_measurement: "mm/24h"
+        state: >
+          {{ (states('sensor.rainmeter_tips_daily') | float(0) * 0.5) | round(2) }}
+
+# ------------------------------------------------------------
+# Automations
+# ------------------------------------------------------------
+automation:
+  - id: rainmeter_register_flow_start_time
+    alias: "Rainmeter - Register flow start time"
+    description: "Reset the flow start time whenever a new calibration run begins"
+    triggers:
+      - entity_id: counter.rainmeter_tip_count_calibration
+        from: "0"
+        to: "1"
+        trigger: state
+    actions:
+      - target:
+          entity_id: input_datetime.rainmeter_flow_start_time
+        data:
+          timestamp: "{{ as_timestamp(now()) }}"
+        action: input_datetime.set_datetime
+    mode: single
+
+  - id: rainmeter_increment_tip_counters
+    alias: "Rainmeter - Increment tip counters"
+    description: "Increment both the calibration counter and the total counter on each bucket tip"
+    triggers:
+      - entity_id: binary_sensor.puerta_1_contact
+        from: "off"
+        to: "on"
+        trigger: state
+    actions:
+      - target:
+          entity_id: counter.rainmeter_tip_count_calibration
+        action: counter.increment
+      - target:
+          entity_id: counter.rainmeter_tip_count_total
+        action: counter.increment
+    mode: queued
+
+  - id: rainmeter_storm_warning
+    alias: Rainmeter - Storm Warning
+    description: >-
+      Notifies when pressure changes rapidly (drop = approaching storm,
+      spike = storm outflow/gust front already arriving). Includes a cooldown
+      so the pressure-recovery drop after a spike doesn't re-trigger as a "new" storm.
+    triggers:
+      - entity_id: sensor.rainmeter_pressure_trend
+        below: -3
+        for: "00:02:00"
+        trigger: numeric_state
+      - entity_id: sensor.rainmeter_pressure_trend
+        above: 3
+        for: "00:02:00"
+        trigger: numeric_state
+    conditions:
+      - condition: template
+        value_template: >-
+          {{ this.attributes.last_triggered is none or
+             (now() - this.attributes.last_triggered).total_seconds() > 5400 }}
+    actions:
+      - data:
+          message: >-
+            Pressure changing rapidly ({{ states('sensor.rainmeter_pressure_trend') }}
+            hPa/h) — storm signature detected.
+        action: notify.notify
+      - action: persistent_notification.create
+        data:
+          title: "Posible tormenta"
+          message: >-
+            Presión: {{ states('sensor.rainmeter_pressure_trend') }} hPa/h
+          notification_id: "rainmeter_storm_warning"

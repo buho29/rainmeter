@@ -1,0 +1,201 @@
+type: grid
+cards:
+  - type: custom:mod-card
+    card:
+      type: vertical-stack
+      cards:
+        - type: heading
+          icon: mdi:weather-partly-cloudy
+          heading: Estacion meteologia
+          heading_style: title
+        - type: custom:mini-graph-card
+          name: Estacion meteologia
+          entities:
+            - entity: sensor.termometro_exterior_temperature
+              name: Temperatura
+              color: "#ff8c69"
+            - entity: sensor.termometro_exterior_humidity
+              name: Humedad
+              color: "#4fc3f7"
+              y_axis: secondary
+          hours_to_show: 24
+          points_per_hour: 2
+          height: 150
+          line_width: 4
+          smoothing: true
+          animate: true
+          font_size: 80
+          hour24: true
+          show:
+            fill: fade
+            graph: line
+            state: true
+            icon: false
+            extrema: true
+            labels: false
+            name: false
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+            - type: custom:mushroom-template-card
+              entity: sensor.termometro_exterior_temperature
+              primary: Temperatura
+              secondary: "{{ states(entity) }} °C"
+              icon: mdi:thermometer
+              icon_color: red
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.termometro_exterior_humidity
+              primary: Humedad
+              secondary: "{{ states(entity) }} %"
+              icon: mdi:water-percent
+              icon_color: blue
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.pluviometro_illuminance
+              primary: Iluminación
+              secondary: "{{ states(entity) }} lx"
+              icon: mdi:weather-sunny
+              icon_color: amber
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.pluviometro_rainwater
+              primary: Lloviendo
+              secondary: |
+                {% if is_state(entity,'raining') %}
+                  Sí
+                {% else %}
+                  No
+                {% endif %}
+              icon: |
+                {% if is_state(entity,'raining') %}
+                  mdi:weather-pouring
+                {% else %}
+                  mdi:weather-partly-cloudy
+                {% endif %}
+              icon_color: |
+                {% if is_state(entity,'raining') %}
+                  red
+                {% else %}
+                  light-blue
+                {% endif %}
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.termometro_exterior_pressure
+              primary: Presión
+              secondary: "{{ states(entity) }} hPa"
+              icon: mdi:gauge
+              icon_color: cyan
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.rainmeter_pressure_trend
+              primary: Tendencia Presión
+              secondary: "{{ states(entity)| float(0) }} hPa/h"
+              icon: mdi:weather-lightning-rainy
+              icon_color: |-
+                {% set v = states(entity) | float(0) %} {% if v < -3 %}
+                  red
+                {% elif v < -1 %}
+                  orange
+                {% else %}
+                  light-blue
+                {% endif %}
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.rainmeter_rain_rate_hourly
+              primary: Lluvia por hora
+              secondary: "{{ states(entity) }} mm/h"
+              icon: mdi:weather-rainy
+              icon_color: blue
+              layout: horizontal
+            - type: custom:mushroom-template-card
+              entity: sensor.rainmeter_rain_rate_daily
+              primary: Últimas 24 h
+              secondary: "{{ states(entity) }} mm"
+              icon: mdi:weather-rainy
+              icon_color: light-blue
+              layout: horizontal
+        - type: custom:expander-card
+          title-card-clickable: true
+          clear: true
+          padding: 0em
+          title-card:
+            type: custom:mushroom-template-card
+            primary: Lectura Manual
+            secondary: Toca para desplegar
+            icon: mdi:gesture-tap
+            icon_color: cyan
+            layout: horizontal
+            tap_action:
+              action: none
+            card_mod:
+              style: |
+                ha-card {
+                  background: linear-gradient( 135deg,
+                    rgba(79, 195, 247, 0.10),
+                    rgba(79, 195, 247, 0.035)
+                  ) !important;
+                  border: 1px solid rgba(79, 195, 247, 0.18) !important;
+                }
+          cards:
+            - type: custom:mod-card
+              card_mod:
+                style: |
+                  ha-card {
+                    margin-top: 12px;
+                    background: none;
+                    box-shadow: none;
+                    border: none;
+                  }
+              card:
+                type: grid
+                columns: 2
+                square: false
+                cards:
+                  - type: custom:mushroom-template-card
+                    entity: counter.rainmeter_tip_count_calibration
+                    primary: Vuelcos
+                    secondary: "{{ states(entity) }}"
+                    icon: mdi:counter
+                    icon_color: >-
+                      {{ 'orange' if states('binary_sensor.puerta_1_contact') ==
+                      'off' else 'blue' }}
+                    layout: horizontal
+                  - type: custom:mushroom-template-card
+                    entity: sensor.rainmeter_accumulated_rain
+                    primary: Acumulado
+                    secondary: "{{ (states(entity) | float(0) * 10) | round(0) }}mL"
+                    icon: mdi:cup-water
+                    icon_color: light-blue
+                    layout: horizontal
+                  - type: custom:mushroom-template-card
+                    entity: sensor.rainmeter_flow_rate
+                    primary: Flujo
+                    secondary: >-
+                      {{ states(entity) }}mL/s({{ (states(entity) | float(0) *
+                      360) | round(0) }}mm/h)
+                    icon: mdi:waves-arrow-right
+                    icon_color: cyan
+                    layout: horizontal
+                  - type: custom:mushroom-template-card
+                    primary: Resetear contador
+                    secondary: Reinicia los vuelcos
+                    icon: mdi:restart
+                    icon_color: red
+                    layout: horizontal
+                    tap_action:
+                      action: call-service
+                      service: counter.reset
+                      target:
+                        entity_id: counter.rainmeter_tip_count_calibration
+                      confirmation:
+                        text: ¿Resetear el contador de vuelcos?
+    card_mod:
+      style: |
+        ha-card {
+          padding: 16px;
+          background: linear-gradient(145deg, rgba(28,36,46,0.84) 0%, rgba(23,30,39,0.78) 50%, rgba(17,23,31,0.72) 100%);
+          border: 1px solid rgba(255,255,255,0.07);
+          box-shadow: inset 0 1px rgba(255,255,255,0.035), 0 8px 24px rgba(0,0,0,0.28);
+        }
