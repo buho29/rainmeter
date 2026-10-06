@@ -1,177 +1,202 @@
-# Pluviómetro basculante Zigbee para Home Assistant
+# Zigbee Tipping Bucket Rain Gauge for Home Assistant
 
-Pluviómetro DIY de balancín (*tipping bucket*) diseñado desde cero en Fusion 360, impreso en ASA y leído con un **sensor de puerta Zigbee** (imán + reed) integrado en Home Assistant. Comparte estructura con una **pantalla Stevenson** que protege un sensor de temperatura, humedad y presión, y lleva un sensor de lluvia de placa en el lateral.
+> 🇪🇸 [Versión en español](README%20es.md)
+
+A DIY tipping bucket rain gauge designed from scratch in Fusion 360, printed in ASA and read by a **Zigbee door sensor** (magnet + reed switch) integrated into Home Assistant. It shares its frame with a **Stevenson screen** that shelters a temperature, humidity and pressure sensor, and it has a plate rain sensor on the side.
 
 <p align="center">
-  <img src="img/02-instalado-jardin.jpeg" width="600" alt="Pluviómetro instalado">
+  <img src="img/02-instalado-jardin.jpeg" width="600" alt="Installed rain gauge">
 </p>
 
-## Características
+## Features
 
-| Parámetro | Valor |
+| Parameter | Value |
 |---|---|
-| Área de captación | **100 cm²** (boca cuadrada R20 mm, lado ≈ 101,7 mm) |
-| Volumen por vuelco | **5 ml** → **0,5 mm** de lluvia |
-| Sensor de vuelcos | Sensor de puerta Zigbee (`binary_sensor.puerta_1_contact`), sin ESP |
-| Material | ASA (resistente a UV e intemperie) |
-| Eje del balancín | Acero inoxidable Ø2,5 mm alojado directamente en el ASA |
-| Topes | Tornillos M3 que se atornillan en la pieza y regulan el ángulo de disparo |
-| Extras | Pantalla Stevenson, sensor de lluvia de placa, alerta de tormenta |
+| Collection area | **100 cm²** (square opening with R20 mm corners, side ≈ 101.7 mm) |
+| Volume per tip | **5 ml** → **0.5 mm** of rain |
+| Tip sensor | Zigbee door sensor (`binary_sensor.puerta_1_contact`), no ESP needed |
+| Material | ASA (UV and weather resistant) |
+| Bucket axle | Ø2.5 mm stainless steel, seated directly in the ASA |
+| End stops | M3 screws threaded into the part, they set the tipping angle |
+| Extras | Stevenson screen, plate rain sensor, storm warning |
 
-## Sensores Zigbee usados
+## Zigbee sensors used
 
-| Sensor | Uso | Enlace |
+| Sensor | Purpose | Link |
 |---|---|---|
-| Sensor de puerta (reed) | Cuenta los vuelcos del balancín | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
-| Sensor de lluvia de placa | Detecta si está lloviendo | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **no lo recomiendo** |
-| Temperatura / humedad / presión | Dentro de la pantalla Stevenson | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
+| Door sensor (reed) | Counts the bucket tips | [AliExpress](https://es.aliexpress.com/item/1005007499860935.html) |
+| Plate rain sensor | Detects whether it is raining | [AliExpress](https://es.aliexpress.com/item/1005009511764724.html) ⚠️ **not recommended** |
+| Temperature / humidity / pressure | Inside the Stevenson screen | [AliExpress](https://es.aliexpress.com/item/1005007307128850.html) |
 
-## Archivos
+## Files
 
-| Archivo | Descripción |
+| File | Description |
 |---|---|
-| [`rainmeter.yaml`](rainmeter.yaml) | *Package* de Home Assistant: contadores, sensores de lluvia/flujo, `utility_meter`, tendencia de presión y alerta de tormenta |
-| [`dashboard.yaml`](dashboard.yaml) | Tarjeta de dashboard de la estación meteorológica |
-| [`embudo.3mf`](embudo.3mf) | Proyecto de impresión (Bambu Studio) |
-| [`3D source/`](3D%20source/) | Fuentes del modelo: `pluviometro.f3z` (Fusion 360) y `pluviometro.step` |
+| [`rainmeter.yaml`](rainmeter.yaml) | Home Assistant package: counters, rain/flow sensors, `utility_meter`, pressure trend and storm warning |
+| [`dashboard.yaml`](dashboard.yaml) | Weather station dashboard card |
+| [`embudo.3mf`](embudo.3mf) | Print project (Bambu Studio) |
+| [`3D source/`](3D%20source/) | Model sources: `pluviometro.f3z` (Fusion 360) and `pluviometro.step` |
 
-## Instalación en Home Assistant
+## Home Assistant installation
 
-1. En `configuration.yaml`:
+1. In `configuration.yaml`:
 
    ```yaml
    homeassistant:
      packages: !include_dir_named packages
    ```
 
-2. Copia `rainmeter.yaml` a `<config>/packages/rainmeter.yaml`.
-3. Ajusta los `entity_id` a tu hardware (`binary_sensor.puerta_1_contact`, `sensor.termometro_exterior_pressure`).
-4. Reinicia HA (o recarga `counter`, `input_datetime` y `template`; `utility_meter` necesita reinicio).
-5. Pega `dashboard.yaml` en una tarjeta manual. Usa tarjetas personalizadas de HACS (`mushroom`, `mini-graph-card`, `expander-card`, `card-mod`).
+2. Copy `rainmeter.yaml` to `<config>/packages/rainmeter.yaml`.
+3. Change the `entity_id`s to match your hardware (`binary_sensor.puerta_1_contact`, `sensor.termometro_exterior_pressure`).
+4. Restart HA (or reload `counter`, `input_datetime` and `template`; `utility_meter` needs a restart).
+5. Paste `dashboard.yaml` into a manual card. It uses custom cards from HACS (`mushroom`, `mini-graph-card`, `expander-card`, `card-mod`).
 
-Notas:
 
-- Las entidades del package **no aparecen en Ajustes → Ayudantes**, pero sí en Herramientas de desarrollo → Estados, historial y dashboards.
-- Si vienes de helpers creados por UI, bórralos antes para no tener duplicados.
-- Los `counter` no llevan `maximum`: si se alcanzara, dejarían de sumar y los `utility_meter` darían 0.
+### Main entities
 
-### Entidades principales
-
-| Entidad | Descripción |
+| Entity | Description |
 |---|---|
-| `counter.rainmeter_tip_count_calibration` | Vuelcos de la sesión de calibración (se resetea a mano) |
-| `counter.rainmeter_tip_count_total` | Vuelcos totales (nunca se resetea, alimenta los `utility_meter`) |
-| `sensor.rainmeter_rain_accumulated` | Lluvia acumulada en la sesión (mm) |
-| `sensor.rainmeter_flow_rate` | Flujo medio de la sesión (mL/s) |
-| `sensor.rainmeter_rain_rate_hourly` | Lluvia de la hora actual (mm/h) |
-| `sensor.rainmeter_rain_rate_daily` | Lluvia del día actual (mm/24h) |
-| `sensor.rainmeter_pressure_trend` | Tendencia de presión (hPa/h) |
+| `counter.rainmeter_tip_count_calibration` | Tips in the calibration session (reset by hand) |
+| `counter.rainmeter_tip_count_total` | Total tips (never reset, feeds the `utility_meter`s) |
+| `sensor.rainmeter_rain_accumulated` | Rain accumulated in the session (mm) |
+| `sensor.rainmeter_flow_rate` | Average flow over the session (mL/s) |
+| `sensor.rainmeter_rain_rate_hourly` | Rain in the current hour (mm/h) |
+| `sensor.rainmeter_rain_rate_daily` | Rain in the current day (mm/24h) |
+| `sensor.rainmeter_pressure_trend` | Pressure trend (hPa/h) |
 
-### Conversiones
+### Conversions
 
-- Vuelcos → mm: `vuelcos × 0,5`
+- Tips → mm: `tips × 0.5`
 - mm → mL (100 cm²): `mm × 10`
 - mL/s → mm/h (100 cm²): `mL/s × 360`
 
-## Notas de diseño
+## Calibrating the end-stop screws
 
-### Balancín
-- Doble cazoleta en V (pared 1,6 mm) sobre un **eje de acero inoxidable de Ø2,5 mm**, con **topes de tornillos M3** que se atornillan en la pieza y fijan el ángulo de disparo.
-- Objetivo de calibración, el mismo que usa `rainmeter.yaml`: **5 ml por vuelco = 0,5 mm** de lluvia sobre 100 cm².
-- **Altura del eje:** más alto = vuelco más franco pero necesita más ángulo; muy bajo = disparo "nervioso".
-- **Chaflán** hacia el eje: aleja el CG del agua y hace que dispare antes. La **profundidad** de la cazoleta fue la palanca más eficiente para subir volumen.
-- Equilibrio en el disparo: `m_agua · d_agua = m_cuerpo · d_cuerpo` (CG del agua medido en Fusion con *Boundary Fill*).
-- Con poco recorrido angular tras el disparo quedan gotas retenidas; con ~20° apenas quedan.
+You need a 5 ml syringe and a 100 ml measure.
 
-### Entrada del agua
-- Se eliminó la cuña central: catapultaba el agua fuera. Mejor que caiga en la esquina de la cazoleta.
-- Tubo de salida del embudo de Ø8 mm (menos velocidad, menos salpicadura).
-- Rejilla antihojas de malla ancha (las finas salpican y se obstruyen).
+> **Level the rain gauge before calibrating.** If it is tilted, one side tips earlier than the other and the calibration is wrong.
 
-### Conteo asimétrico (resuelto)
-Al bascular a un lado contaba 2 veces y al otro 1 (o 0). No era software: el sensor no quedaba centrado respecto a las dos posiciones del imán. **Desplazar el sensor 13 mm** lo solucionó.
+### 1. Adjust each side (4.6 ml)
+1. Let the bucket rest on one side.
+2. With the syringe, slowly add **4.6 ml** to the upper bucket.
+3. Adjust the M3 end-stop screw on that side until the bucket tips right at 4.6 ml. If it tips too early or too late, turn the screw and repeat.
+4. Do the same on the other side.
 
-Por eso `rainmeter.yaml` **no lleva debounce**. La automatización `Rainmeter - Increment tip counters` salta con cada cambio `off → on` de `binary_sensor.puerta_1_contact`, suma uno a los dos contadores y usa `mode: queued` para no perder vuelcos seguidos.
+It is calibrated at 4.6 ml instead of 5 ml for two reasons:
+- Water keeps coming in while the bucket is tipping.
+- A few drops always stay stuck in the bucket after each tip. The design tries to minimise them, but they never go away completely.
 
-### Prueba de caudal
-Se mide con `sensor.rainmeter_flow_rate`, que calcula `(vuelcos × 5) / segundos`. Los segundos van desde el primer vuelco de la sesión (`input_datetime.rainmeter_flow_start_time`) hasta el último. Es un flujo medio, pensado para calibrar, no una tasa de lluvia instantánea. Para pasarlo a mm/h: `mL/s × 360`.
+Together, each tip ends up being about 5 ml, which is what `rainmeter.yaml` counts.
 
-- 6 ml/s (≈ 2160 mm/h) → lectura correcta (200 ml de 200 ml).
-- 12 ml/s (≈ 4320 mm/h) → ~15 % de pérdida.
-- Ambos muy por encima de cualquier lluvia real (récords de ~300 mm/h en 1 min).
+### 2. Validate with 100 ml
+1. Reset the counter with the **Resetear contador** (reset counter) button on the dashboard (`counter.rainmeter_tip_count_calibration`).
+2. Pour **100 ml very slowly** into the gauge opening.
+3. It should read **20 tips** (accumulated = 10 mm).
+4. The **Flujo** (flow) sensor (`sensor.rainmeter_flow_rate`) must not go above **6 ml/s**. At 12 ml/s about 15 % is lost (see [Flow test](#flow-test)).
 
-### Alerta de tormenta
-Un sensor `derivative` (`sensor.rainmeter_pressure_trend`, ventana de 20 min) calcula la tendencia de presión en hPa/h a partir de `sensor.termometro_exterior_pressure`. La automatización `Rainmeter - Storm Warning`:
+If you get more than 20 tips, each tip holds less than 5 ml: adjust the stops so it tips with a little more water. If you get fewer, do the opposite. Repeat until you get 20.
 
-- Salta cuando la tendencia baja de **−3 hPa/h** (tormenta acercándose) o sube de **+3 hPa/h** (frente de racha ya llegando), mantenida **2 min**.
-- Tiene un **enfriamiento de 90 min**, para que la recuperación de la presión tras un pico no cuente como una tormenta nueva.
-- Envía `notify.notify` y una `persistent_notification` con `notification_id` fijo (se actualiza en vez de acumularse).
+### 3. Check again in the final installation
+Once it is mounted in place, level it again and repeat the 100 ml validation. Screwing on the bracket can leave it slightly tilted and shift the tipping point.
 
-**Por qué 20 min de ventana:** se simuló la derivada con 10 días de historial de presión, que incluían la tormenta del 03/10/2026. Con 30 min la tendencia apenas llegó a +3,2 hPa/h y no se mantuvo 2 min, así que **no habría avisado**. Con 20 min habría avisado unos 14 min antes de la lluvia fuerte, sin ninguna falsa alarma en esos 10 días. Con 15 min o menos, los escalones de 0,1 hPa del sensor ya generan falsas alarmas.
+## Design notes
 
-### Cuidados con el sensor Zigbee
-- Los sensores de puerta no son estancos: aislar reed e imán del agua.
-- Latencia Zigbee y consumo de batería con lluvia muy intensa.
+### Tipping bucket
+- Double V-shaped bucket (1.6 mm wall) on a **Ø2.5 mm stainless steel axle**, with **M3 screw end stops** threaded into the part that set the tipping angle.
+- Calibration target, the same one `rainmeter.yaml` uses: **5 ml per tip = 0.5 mm** of rain over 100 cm².
+- **Axle height:** higher = cleaner tip but needs more angle; very low = "twitchy" tipping.
+- **Chamfer** towards the axle: moves the water's centre of gravity away and makes it tip earlier. Bucket **depth** was the most effective lever to increase volume.
+- Balance at the tipping point: `m_water · d_water = m_body · d_body` (water centre of gravity measured in Fusion with *Boundary Fill*).
+- With little angular travel after tipping, drops stay trapped; at ~20° hardly any remain.
 
-## Galería
+### Water inlet
+- The central wedge was removed: it catapulted the water out. It is better for water to fall into the corner of the bucket.
+- Wide-mesh leaf guard (fine meshes splash and clog).
 
-### Instalado
+### Asymmetric counting (solved)
+When tipping to one side it counted twice, and to the other side once (or not at all). It was not software: the sensor was not centred relative to the two magnet positions. **Moving the sensor 13 mm** fixed it.
+
+That is why `rainmeter.yaml` has **no debounce**. The `Rainmeter - Increment tip counters` automation fires on every `off → on` change of `binary_sensor.puerta_1_contact`, adds one to both counters and uses `mode: queued` so quick consecutive tips are not lost.
+
+### Flow test
+Measured with `sensor.rainmeter_flow_rate`, which computes `(tips × 5) / seconds`. The seconds run from the first tip of the session (`input_datetime.rainmeter_flow_start_time`) to the last one. It is an average flow meant for calibration, not an instantaneous rain rate. To convert to mm/h: `mL/s × 360`.
+
+- 6 ml/s (≈ 2160 mm/h) → correct reading (200 ml out of 200 ml).
+- 12 ml/s (≈ 4320 mm/h) → ~15 % loss.
+- Both are far above any real rainfall (records are around 300 mm/h over 1 min).
+
+### Storm warning
+A `derivative` sensor (`sensor.rainmeter_pressure_trend`, 20 min window) computes the pressure trend in hPa/h from `sensor.termometro_exterior_pressure`. The `Rainmeter - Storm Warning` automation:
+
+- Fires when the trend drops below **−3 hPa/h** (storm approaching) or rises above **+3 hPa/h** (gust front already arriving), held for **2 min**.
+- Has a **90 min cooldown**, so the pressure recovering after a spike does not count as a new storm.
+- Sends `notify.notify` and a `persistent_notification` with a fixed `notification_id` (it updates instead of piling up).
+
+**Why a 20 min window:** the derivative was simulated over 10 days of pressure history, including the storm on 03/10/2026. With 30 min the trend barely reached +3.2 hPa/h and did not hold for 2 min, so it **would not have warned**. With 20 min it would have warned about 14 min before the heavy rain, with no false alarms in those 10 days. With 15 min or less, the sensor's 0.1 hPa steps already cause false alarms.
+
+### Zigbee sensor care
+- Door sensors are not waterproof: keep the reed switch and magnet away from water.
+- Zigbee latency and battery drain during very heavy rain.
+
+## Gallery
+
+### Installed
 
 <table>
   <tr>
-    <td><img src="img/01-instalado-chimenea.png" width="250" alt="Instalado en la chimenea"></td>
-    <td><img src="img/03-instalado-detalle.jpg" width="250" alt="Detalle instalado"></td>
-    <td><img src="img/04-instalado-frontal.png" width="250" alt="Vista desde arriba"></td>
+    <td><img src="img/01-instalado-chimenea.png" width="250" alt="Installed on the chimney"></td>
+    <td><img src="img/03-instalado-detalle.jpg" width="250" alt="Installed, close-up"></td>
+    <td><img src="img/04-instalado-frontal.png" width="250" alt="View from above"></td>
   </tr>
   <tr>
-    <td align="center" valign="top" width="33%">Vista general</td>
-    <td align="center" valign="top" width="33%">Detalle</td>
-    <td align="center" valign="top" width="33%">Vista desde arriba</td>
+    <td align="center" valign="top" width="33%">Overview</td>
+    <td align="center" valign="top" width="33%">Close-up</td>
+    <td align="center" valign="top" width="33%">View from above</td>
   </tr>
   <tr>
-    <td><img src="img/05-instalado-contraluz.png" width="250" alt="Desde abajo"></td>
-    <td><img src="img/06-pantalla-stevenson.png" width="250" alt="Pantalla Stevenson"></td>
-    <td><img src="img/02-instalado-jardin.jpeg" width="250" alt="Instalado"></td>
+    <td><img src="img/05-instalado-contraluz.png" width="250" alt="From below"></td>
+    <td><img src="img/06-pantalla-stevenson.png" width="250" alt="Stevenson screen"></td>
+    <td><img src="img/02-instalado-jardin.jpeg" width="250" alt="Installed"></td>
   </tr>
   <tr>
-    <td align="center" valign="top" width="33%">Desde abajo<br><sub>El brazo de esta versión se imprimió en PLA y no duró ni 3 h al sol</sub></td>
-    <td align="center" valign="top" width="33%">Pantalla Stevenson</td>
-    <td align="center" valign="top" width="33%">Instalado</td>
+    <td align="center" valign="top" width="33%">From below<br><sub>The arm in this version was printed in PLA and didn't last even 3 h in the sun</sub></td>
+    <td align="center" valign="top" width="33%">Stevenson screen</td>
+    <td align="center" valign="top" width="33%">Installed</td>
   </tr>
 </table>
 
-### Montaje
+### Assembly
 
 <table>
   <tr>
-    <td><img src="img/07-montaje-rejilla.png" width="250" alt="Rejilla antihojas"></td>
-    <td><img src="img/08-montaje-lateral.png" width="250" alt="Vista lateral"></td>
-    <td><img src="img/09-balancin-sensor-puerta.png" width="250" alt="Balancín y sensor de puerta"></td>
+    <td><img src="img/07-montaje-rejilla.png" width="250" alt="Leaf guard"></td>
+    <td><img src="img/08-montaje-lateral.png" width="250" alt="Side view"></td>
+    <td><img src="img/09-balancin-sensor-puerta.png" width="250" alt="Tipping bucket and door sensor"></td>
   </tr>
   <tr>
-    <td align="center">Rejilla antihojas</td>
-    <td align="center">Vista lateral</td>
-    <td align="center">Balancín, topes y sensor de puerta</td>
+    <td align="center">Leaf guard</td>
+    <td align="center">Side view</td>
+    <td align="center">Tipping bucket, end stops and door sensor</td>
   </tr>
 </table>
 
-### Diseño 3D (Fusion 360)
+### 3D design (Fusion 360)
 
 <table>
   <tr>
-    <td><img src="img/10-render-fusion.png" width="250" alt="Render completo"></td>
-    <td><img src="img/11-render-seccion.png" width="250" alt="Sección embudo y balancín"></td>
-    <td><img src="img/12-render-stevenson-seccion.png" width="250" alt="Sección pantalla Stevenson"></td>
+    <td><img src="img/10-render-fusion.png" width="250" alt="Full render"></td>
+    <td><img src="img/11-render-seccion.png" width="250" alt="Funnel and bucket cross-section"></td>
+    <td><img src="img/12-render-stevenson-seccion.png" width="250" alt="Stevenson screen cross-section"></td>
   </tr>
   <tr>
-    <td align="center">Render completo</td>
-    <td align="center">Sección: embudo y balancín</td>
-    <td align="center">Sección: pantalla Stevenson</td>
+    <td align="center">Full render</td>
+    <td align="center">Cross-section: funnel and bucket</td>
+    <td align="center">Cross-section: Stevenson screen</td>
   </tr>
 </table>
 
 ### Home Assistant
 
 <p align="center">
-  <img src="img/13-dashboard-home-assistant.jpg" width="300" alt="Dashboard en Home Assistant">
+  <img src="img/13-dashboard-home-assistant.jpg" width="300" alt="Home Assistant dashboard">
 </p>
