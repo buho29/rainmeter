@@ -18,6 +18,7 @@ Pluviómetro DIY de balancín (*tipping bucket*) diseñado desde cero en Fusion 
 | Material | ASA (resistente a UV e intemperie) |
 | Eje del balancín | Acero inoxidable Ø2,5 mm alojado directamente en el ASA |
 | Topes | Tornillos M3 que se atornillan en la pieza y regulan el ángulo de disparo |
+| Imán | Imán de neodimio de Ø3 × 2 mm en el balancín, activa el reed del sensor de puerta |
 | Extras | Pantalla Stevenson, sensor de lluvia de placa, alerta de tormenta |
 
 ## Sensores Zigbee usados

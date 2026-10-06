@@ -18,6 +18,7 @@ A DIY tipping bucket rain gauge designed from scratch in Fusion 360, printed in 
 | Material | ASA (UV and weather resistant) |
 | Bucket axle | Ø2.5 mm stainless steel, seated directly in the ASA |
 | End stops | M3 screws threaded into the part, they set the tipping angle |
+| Magnet | Ø3 × 2 mm neodymium magnet on the tipping bucket, triggers the door sensor's reed switch |
 | Extras | Stevenson screen, plate rain sensor, storm warning |
 
 ## Zigbee sensors used
