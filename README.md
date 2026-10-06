@@ -2,7 +2,7 @@
 
 > 🇪🇸 [Versión en español](README%20es.md)
 
-A DIY tipping bucket rain gauge designed from scratch in Fusion 360, printed in ASA and read by a **Zigbee door sensor** (magnet + reed switch) integrated into Home Assistant. It shares its frame with a **Stevenson screen** that shelters a temperature, humidity and pressure sensor, and it has a plate rain sensor on the side.
+A DIY tipping bucket rain gauge in Fusion 360, printed in ASA and read by a **Zigbee door sensor** (magnet + reed switch) integrated into Home Assistant. It shares its frame with a **Stevenson screen** that shelters a temperature, humidity and pressure sensor, and it has a plate rain sensor on the side.
 
 <p align="center">
   <img src="img/02-instalado-jardin.jpeg" width="600" alt="Installed rain gauge">
@@ -98,7 +98,7 @@ Together, each tip ends up being about 5 ml, which is what `rainmeter.yaml` coun
 If you get more than 20 tips, each tip holds less than 5 ml: adjust the stops so it tips with a little more water. If you get fewer, do the opposite. Repeat until you get 20.
 
 ### 3. Check again in the final installation
-Once it is mounted in place, level it again and repeat the 100 ml validation. Screwing on the bracket can leave it slightly tilted and shift the tipping point.
+Once it is mounted in place, level it again and use the syringe to check that each side still tips at 4.6 ml, or at whatever volume worked in the 100 ml test. Screwing on the bracket can leave it slightly tilted and shift the tipping point. If one side has changed, readjust its end-stop screw.
 
 ## Design notes
 

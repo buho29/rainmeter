@@ -2,7 +2,7 @@
 
 > 🇬🇧 [English version](README.md)
 
-Pluviómetro DIY de balancín (*tipping bucket*) diseñado desde cero en Fusion 360, impreso en ASA y leído con un **sensor de puerta Zigbee** (imán + reed) integrado en Home Assistant. Comparte estructura con una **pantalla Stevenson** que protege un sensor de temperatura, humedad y presión, y lleva un sensor de lluvia de placa en el lateral.
+Pluviómetro DIY de balancín (*tipping bucket*) diseñado en Fusion 360, impreso en ASA y leído con un **sensor de puerta Zigbee** (imán + reed) integrado en Home Assistant. Comparte estructura con una **pantalla Stevenson** que protege un sensor de temperatura, humedad y presión, y lleva un sensor de lluvia de placa en el lateral.
 
 <p align="center">
   <img src="img/02-instalado-jardin.jpeg" width="600" alt="Pluviómetro instalado">
@@ -98,7 +98,7 @@ Con eso, cada vuelco acaba siendo de unos 5 ml, que es lo que cuenta `rainmeter.
 Si salen más de 20 vuelcos, cada vuelco lleva menos de 5 ml: ajusta los topes para que vuelque con un poco más de agua. Si salen menos, al revés. Repite hasta que salgan 20.
 
 ### 3. Comprobar de nuevo en la instalación final
-Cuando esté montado en su sitio, nivélalo otra vez y repite la validación de 100 ml. Al atornillar el soporte puede quedar algo inclinado y cambiar el punto de vuelco.
+Cuando esté montado en su sitio, nivélalo otra vez y comprueba con la jeringuilla que cada lado sigue volcando con 4,6 ml, o con el volumen que te haya salido bien en la prueba de 100 ml. Al atornillar el soporte puede quedar algo inclinado y cambiar el punto de vuelco. Si un lado ha cambiado, reajusta su tornillo de tope.
 
 ## Notas de diseño
 
