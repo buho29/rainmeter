@@ -1,6 +1,8 @@
 # Zigbee Tipping Bucket Rain Gauge for Home Assistant
 
 > 🇪🇸 [Versión en español](README%20es.md)
+>
+> 🖨️ **Download the print files on [MakerWorld](https://makerworld.com/es/models/3406401-rainmeter-zigbee-rain-gauge-for-home-assistant)**
 
 A DIY tipping bucket rain gauge in Fusion 360, printed in ASA and read by a **Zigbee door sensor** (magnet + reed switch) integrated into Home Assistant. It shares its frame with a **Stevenson screen** that shelters a temperature, humidity and pressure sensor, and it has a plate rain sensor on the side.
 
@@ -33,6 +35,7 @@ A DIY tipping bucket rain gauge in Fusion 360, printed in ASA and read by a **Zi
 
 | File | Description |
 |---|---|
+| [MakerWorld](https://makerworld.com/es/models/3406401-rainmeter-zigbee-rain-gauge-for-home-assistant) | Published model, ready to print |
 | [`rainmeter.yaml`](rainmeter.yaml) | Home Assistant package: counters, rain/flow sensors, `utility_meter`, pressure trend and storm warning |
 | [`dashboard.yaml`](dashboard.yaml) | Weather station dashboard card |
 | [`embudo.3mf`](embudo.3mf) | Print project (Bambu Studio) |

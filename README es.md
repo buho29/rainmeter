@@ -1,6 +1,8 @@
 # Pluviómetro basculante Zigbee para Home Assistant
 
 > 🇬🇧 [English version](README.md)
+>
+> 🖨️ **Descarga los archivos de impresión en [MakerWorld](https://makerworld.com/es/models/3406401-rainmeter-zigbee-rain-gauge-for-home-assistant)**
 
 Pluviómetro DIY de balancín (*tipping bucket*) diseñado en Fusion 360, impreso en ASA y leído con un **sensor de puerta Zigbee** (imán + reed) integrado en Home Assistant. Comparte estructura con una **pantalla Stevenson** que protege un sensor de temperatura, humedad y presión, y lleva un sensor de lluvia de placa en el lateral.
 
@@ -33,6 +35,7 @@ Pluviómetro DIY de balancín (*tipping bucket*) diseñado en Fusion 360, impres
 
 | Archivo | Descripción |
 |---|---|
+| [MakerWorld](https://makerworld.com/es/models/3406401-rainmeter-zigbee-rain-gauge-for-home-assistant) | Modelo publicado, listo para imprimir |
 | [`rainmeter.yaml`](rainmeter.yaml) | *Package* de Home Assistant: contadores, sensores de lluvia/flujo, `utility_meter`, tendencia de presión y alerta de tormenta |
 | [`dashboard.yaml`](dashboard.yaml) | Tarjeta de dashboard de la estación meteorológica |
 | [`embudo.3mf`](embudo.3mf) | Proyecto de impresión (Bambu Studio) |
